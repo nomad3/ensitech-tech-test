@@ -1,3 +1,32 @@
+resource "google_compute_instance" "default" {
+  name         = var.vm_name
+  machine_type = var.vm_machine_type
+  zone         = var.vm_zone
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+    }
+  }
+
+  network_interface {
+    network = var.network_name
+    subnetwork = var.subnetwork_name
+    access_config {
+    }
+  }
+
+  metadata = {
+    "startup-script" = "apt-get update && apt-get install -y nginx google-cloud-logging-agent && echo 'Hello, world!' > /var/www/html/index.html"
+    enable-oslogin = true
+  }
+
+  tags = ["http-server"]
+
+  service_account {
+    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+  }
+}
 
 resource "google_project_iam_member" "logging_agent" {
   project = var.gcp_project_id

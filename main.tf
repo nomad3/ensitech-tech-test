@@ -24,7 +24,7 @@ module "vpc_network" {
 module "vm" {
   source = "./modules/vm"
   vm_name = var.vm_name
-  vm_machine_type = "f1-micro"
+  vm_machine_type = var.vm_machine_type
   vm_zone = var.vm_zone
   network_name = module.vpc_network.vpc_network_name
   subnetwork_name = "default"
@@ -36,4 +36,12 @@ resource "google_compute_subnetwork" "default" {
   ip_cidr_range = "10.0.0.0/16"
   network       = module.vpc_network.vpc_network_name
   region        = var.gcp_region
+}
+
+output "vpc_network_name" {
+  value = module.vpc_network.vpc_network_name
+}
+
+output "vm_name" {
+  value = module.vm.vm_name
 }
